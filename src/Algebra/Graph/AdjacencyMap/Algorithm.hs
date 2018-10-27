@@ -16,13 +16,12 @@ import Data.Foldable (toList)
 import Data.Maybe
 
 import Algebra.Graph.AdjacencyMap
-import Algebra.Graph.NonEmpty
-import Algebra.Graph.ToGraph
 
-import qualified Data.Graph       as KL
-import qualified Data.Graph.Typed as Typed
-import qualified Data.Map.Strict  as Map
-import qualified Data.Set         as Set
+import qualified Algebra.Graph.AdjacencyMap.NonEmpty as NonEmpty
+import qualified Data.Graph                          as KL
+import qualified Data.Graph.Typed                    as Typed
+import qualified Data.Map.Strict                     as Map
+import qualified Data.Set                            as Set
 
 -- TODO: Update docs.
 -- | Compute the /condensation/ of a graph, where each vertex corresponds to a
@@ -38,7 +37,7 @@ import qualified Data.Set         as Set
 --                                  , (Set.'Set.fromList' [3]  , Set.'Set.fromList' [1,4])
 --                                  , (Set.'Set.fromList' [3]  , Set.'Set.fromList' [5]  )]
 -- @
-scc :: Ord a => AdjacencyMap a -> AdjacencyMap (NonEmptyGraph a)
+scc :: Ord a => AdjacencyMap a -> AdjacencyMap (NonEmpty.AdjacencyMap a)
 scc m = gmap (components Map.!) m
   where
     (Typed.GraphKL g r _) = Typed.fromAdjacencyMap m
@@ -46,4 +45,4 @@ scc m = gmap (components Map.!) m
     expand xs  = map (\x -> (x, g)) xs
       where
         s = Set.fromList xs
-        g = fromJust . toNonEmptyGraph . toGraph $ induce (`Set.member` s) m
+        g = fromJust . NonEmpty.toNonEmptyGraph $ induce (`Set.member` s) m
