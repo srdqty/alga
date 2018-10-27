@@ -14,18 +14,17 @@ module Algebra.Graph.AdjacencyMap.Internal (
     -- * Adjacency map implementation
     AdjacencyMap (..), empty, vertex, overlay, connect, fromAdjacencySets,
     consistent
-  ) where
+    ) where
 
 import Prelude ()
 import Prelude.Compat hiding (null)
 
+import Control.DeepSeq
 import Data.Foldable (foldMap)
 import Data.List
 import Data.Map.Strict (Map, keysSet, fromSet)
 import Data.Monoid
 import Data.Set (Set)
-
-import Control.DeepSeq (NFData (..))
 
 import qualified Data.Map.Strict as Map
 import qualified Data.Set        as Set
@@ -153,6 +152,17 @@ instance (Ord a, Show a) => Show (AdjacencyMap a) where
         eshow xs       = "edges "    ++ show xs
         used           = Set.toAscList (referredToVertexSet m)
 
+instance (Ord a, Num a) => Num (AdjacencyMap a) where
+    fromInteger = vertex . fromInteger
+    (+)         = overlay
+    (*)         = connect
+    signum      = const empty
+    abs         = id
+    negate      = id
+
+instance NFData a => NFData (AdjacencyMap a) where
+    rnf (AM a) = rnf a
+
 -- | Construct the /empty graph/.
 -- Complexity: /O(1)/ time and memory.
 --
@@ -219,17 +229,6 @@ connect :: Ord a => AdjacencyMap a -> AdjacencyMap a -> AdjacencyMap a
 connect x y = AM $ Map.unionsWith Set.union [ adjacencyMap x, adjacencyMap y,
     fromSet (const . keysSet $ adjacencyMap y) (keysSet $ adjacencyMap x) ]
 {-# NOINLINE [1] connect #-}
-
-instance (Ord a, Num a) => Num (AdjacencyMap a) where
-    fromInteger = vertex . fromInteger
-    (+)         = overlay
-    (*)         = connect
-    signum      = const empty
-    abs         = id
-    negate      = id
-
-instance NFData a => NFData (AdjacencyMap a) where
-    rnf (AM a) = rnf a
 
 -- | Construct a graph from a list of adjacency sets.
 -- Complexity: /O((n + m) * log(n))/ time and /O(n + m)/ memory.

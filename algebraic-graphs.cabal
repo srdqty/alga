@@ -64,6 +64,8 @@ library
                         Algebra.Graph.AdjacencyMap,
                         Algebra.Graph.AdjacencyMap.Algorithm,
                         Algebra.Graph.AdjacencyMap.Internal,
+                        Algebra.Graph.AdjacencyMap.NonEmpty,
+                        Algebra.Graph.AdjacencyMap.NonEmpty.Internal,
                         Algebra.Graph.Class,
                         Algebra.Graph.Export,
                         Algebra.Graph.Export.Dot,
