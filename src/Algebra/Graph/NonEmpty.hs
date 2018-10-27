@@ -82,7 +82,7 @@ We define a 'Num' instance as a convenient notation for working with graphs:
     > 1 + 2 * 3   == Overlay (Vertex 1) (Connect (Vertex 2) (Vertex 3))
     > 1 * (2 + 3) == Connect (Vertex 1) (Overlay (Vertex 2) (Vertex 3))
 
-Note that the 'signum' method of the 'Num' type class cannot be implemented.
+Note that the 'signum' method of the type class 'Num' cannot be implemented.
 
 The 'Eq' instance is currently implemented using the 'AM.AdjacencyMap' as the
 /canonical graph representation/ and satisfies the following laws of algebraic
@@ -124,12 +124,10 @@ s == 'size' g@
 
 Note that 'size' counts all leaves of the expression:
 
-@'vertexCount' 'empty'           == 0
-'size'        'empty'           == 1
-'vertexCount' ('vertex' x)      == 1
-'size'        ('vertex' x)      == 1
-'vertexCount' ('empty' + 'empty') == 0
-'size'        ('empty' + 'empty') == 2@
+@'vertexCount' ('vertex' x)            == 1
+'size'        ('vertex' x)            == 1
+'vertexCount' ('vertex' x + 'vertex' x) == 1
+'size'        ('vertex' x + 'vertex' x) == 2@
 
 Converting a 'NonEmptyGraph' to the corresponding 'AM.AdjacencyMap' takes
 /O(s + m * log(m))/ time and /O(s + m)/ memory. This is also the complexity of
@@ -469,7 +467,6 @@ hasEdge s t g = hit g == Edge
 -- Complexity: /O(s * log(n))/ time.
 --
 -- @
--- vertexCount 'empty'             ==  0
 -- vertexCount ('vertex' x)        ==  1
 -- vertexCount                   ==  'length' . 'vertexList'
 -- vertexCount x \< vertexCount y ==> x \< y
